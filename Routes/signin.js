@@ -12,7 +12,7 @@ const upload = mutler({ storage: storage })
 
 
 //local imports
-const UserData = require("../Models/UserDataModel");
+const User = require("../Models/UserDataModel");
 
 //Handle User registration requests
 router.post("/register", async (req, res) => {
@@ -39,7 +39,7 @@ router.post("/register", async (req, res) => {
     }
     //Cheking is user email is already in use 
     try {
-        const emailInUse = await UserData.findOne({
+        const emailInUse = await User.findOne({
             Email: data.Email,
         });
 
@@ -50,14 +50,24 @@ router.post("/register", async (req, res) => {
             });
         }
 
+        let profileImageData;
+
+        if (req.file) {
+            // If an image file is uploaded, use the uploaded file's binary data
+            profileImageData = req.file.buffer;
+        } else {
+            // Handle the case where no image or URL is provided
+            profileImageData = null;
+        }
+
         const hashedPassword = await bcrypt.hash(data.Password, 12);
 
         delete data.Password;
         data.HashedPassword = hashedPassword;
-        data.profile_img = req.file.buffer;
+        data.profile_img = profileImageData;
         //data.Bio = bio;
 
-        const user = await UserData.create(data);
+        const user = await User.create(data);
 
         return res.send({
             data: {
@@ -67,7 +77,6 @@ router.post("/register", async (req, res) => {
                 HashedPassword: user.HashedPassword,
                 UserName: user.UserName,
                 profile_img: user.profile_img,
-                Bio: user.Bio,
             },
             message: "USER CREATED SUCCESSFULLY",
             proceed: true,

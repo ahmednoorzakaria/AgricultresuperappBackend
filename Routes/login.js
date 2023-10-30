@@ -9,7 +9,7 @@ app.use(cors());
 
 
 //local imports
-const UserData = require("../Models/UserDataModel");
+const User = require("../Models/UserDataModel");
 
 
 
@@ -34,7 +34,7 @@ router.post("/Signin", async (req, res) => {
     }
     // Check if user exists in the database
     try {
-        const user = await UserData.findOne({
+        const user = await User.findOne({
             Email: data.Email,
         });
 
