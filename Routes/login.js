@@ -9,7 +9,7 @@ app.use(cors());
 
 
 //local imports
-const User = require("../Models/UserDataModel");
+const User = require("../Models/Schemas");
 
 
 

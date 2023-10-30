@@ -12,7 +12,7 @@ const upload = mutler({ storage: storage })
 
 
 //local imports
-const User = require("../Models/UserDataModel");
+const User = require("../Models/Schemas");
 
 //Handle User registration requests
 router.post("/register", async (req, res) => {
