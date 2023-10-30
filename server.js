@@ -4,13 +4,14 @@ const app = express()
 
 //local imports
 const connectDb = require("./Db.js")
-const loginRoutes = require("./Routes/user.js")
+const loginRoutes = require("./Routes/login.js")
+const registerRoutes = require("./Routes/signin.js")
 
 const PORT = 6000;
 
 //middleware
 app.use(bodyParser.json())
-app.use("/api/users",loginRoutes)
+app.use("/api/users",loginRoutes , registerRoutes)
 
 
 connectDb()
