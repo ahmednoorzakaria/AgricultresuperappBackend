@@ -37,3 +37,5 @@ router.post('/posts/:postId/comment', async (req, res) => {
       return res.status(500).json({ message: 'Internal server error' });
     }
   });
+
+  module.exports = router  
