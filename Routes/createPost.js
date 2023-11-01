@@ -7,27 +7,37 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const Post = require('../Models/Schemas')
+const Post = require('../Models/PostModel')
 
 router.post('/posts', async (req, res) => {
     try {
       // Extract post data from the request body
-      const { user_id, post_content, post_image } = req.body;
-  
+      const { user_id, post_content, post_heading, post_image, likes_count = 0, comments_count = 0, date = new Date() } = req.body;
+
       // Create a new Post document
-      const newPost = new Post({
+      const post = await Post.create({
         user_id,
         post_content,
+        post_heading,
         post_image,
-        timestamp: new Date(),
-        likes_count: 0,
-        comments_count: 0,
+        likes_count,
+        comments_count,
+        date
       });
   
-      // Save the new post to the database
-      await newPost.save();
+      return res.status(201).json({
+        post_heading: post.post_heading,
+        post_content: post.post_content,
+        post_image: post.post_image,
+        timestamp: post.date,
+        likes_count: post.likes_count,
+        comments_count: post.comments_count
+      })
+    
   
-      return res.status(201).json(newPost);
+  
+  
+      
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Internal server error' });

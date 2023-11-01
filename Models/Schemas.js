@@ -11,14 +11,7 @@ const UserSchema = mongoose.Schema({
 });
 
 // Defining the schema for the Agricultural Blogs/Posts Table
-const PostSchema = new mongoose.Schema({ 
-  user_id: { type: mongoose.Schema.Types.ObjectId, ref: "UserData" }, 
-  post_content: String,
-  post_image: Buffer, 
-  timestamp: Date,
-  likes_count: Number, 
-  comments_count: Number,
-});
+
 
 // Define the schema for the Agricultural Communities/Groups Table
 const CommunitySchema = new mongoose.Schema({ // Correct the schema variable name
@@ -62,7 +55,6 @@ const LikeSchema = new mongoose.Schema({
 
 // Creating the models
 const User = mongoose.model("UserData", UserSchema);
-const Post = mongoose.model("Post", PostSchema);
 const Community = mongoose.model("AgricultureCommunities", CommunitySchema);
 const CommunityMembers = mongoose.model("CommunityMembers", CommunityMemberSchema);
 const Following = mongoose.model("Following", FollowingSchema);
@@ -72,7 +64,6 @@ const Likes = mongoose.model("Likes", LikeSchema);
 // Export the models
 module.exports = {
   User,
-  Post,
   Community,
   CommunityMembers,
   Following,
