@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const Post = require('../Models/Schemas')
+const Post = require('../Models/PostModel')
 
 router.get('/posts', async (req, res) => {
     try {

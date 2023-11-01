@@ -1,14 +1,7 @@
 const mongoose = require('mongoose');
 
 // Defining the schema for the Users Table
-const UserSchema = mongoose.Schema({ 
-  name: String,
-  email: String,
-  hashedPassword: String,
-  userName: String,
-  profile_img: Buffer,
-  bio: String,
-});
+
 
 // Defining the schema for the Agricultural Blogs/Posts Table
 
@@ -54,7 +47,6 @@ const LikeSchema = new mongoose.Schema({
 });
 
 // Creating the models
-const User = mongoose.model("UserData", UserSchema);
 const Community = mongoose.model("AgricultureCommunities", CommunitySchema);
 const CommunityMembers = mongoose.model("CommunityMembers", CommunityMemberSchema);
 const Following = mongoose.model("Following", FollowingSchema);
@@ -63,7 +55,6 @@ const Likes = mongoose.model("Likes", LikeSchema);
 
 // Export the models
 module.exports = {
-  User,
   Community,
   CommunityMembers,
   Following,
