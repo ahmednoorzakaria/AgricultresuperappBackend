@@ -10,11 +10,16 @@ const createPostRoutes = require("./Routes/createPost.js")
 const getAllPostRoutes = require("./Routes/getAllPosts.js")
 const getUserPostRoutes = require("./Routes/getUserPosts.js")
 
-const PORT = 6000;
+const PORT = 5000;
 
 //middleware
 app.use(bodyParser.json())
 app.use("/api/users",loginRoutes , registerRoutes,createPostRoutes,getAllPostRoutes,getUserPostRoutes);
+app.use("/",(req,res)=>{
+    return res.json({
+        message: "Welcome to the Agricultre API"
+    });
+})
 
 
 connectDb()
