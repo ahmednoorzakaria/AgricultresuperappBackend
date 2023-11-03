@@ -63,10 +63,7 @@ router.post("/register", async (req, res) => {
         
       delete data.password;
       data.hashedPassword = hashedPassword;
-       
-        
-        
-        //data.Bio = bio;
+      data.bio = req.body.bio;
 
         const user = await UserData.create(data);
 
@@ -80,6 +77,7 @@ router.post("/register", async (req, res) => {
                 HashedPassword: hashedPassword,
                 UserName: user.userName,
                 profile_img: user.profile_img,
+                bio: user.bio,
             },
             message: "USER CREATED SUCCESSFULLY",
             proceed: true,
