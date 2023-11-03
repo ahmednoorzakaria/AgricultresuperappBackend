@@ -18,7 +18,8 @@ const UserData = require("../Models/UserModel");
 router.post("/register", async (req, res) => {
     const data = req.body;
     // Email validation regular expression
-    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
 
     // Password validation regular expression
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
