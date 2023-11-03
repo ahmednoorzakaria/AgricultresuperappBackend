@@ -6,73 +6,83 @@ const router = express.Router()
 const app = express();
 app.use(express.json());
 app.use(cors());
+const jwtUtils = require("./jwtUtils"); // Import JWT-related functions and secret key
 
 
 //local imports
-const User = require("../Models/Schemas");
+const User = require("../Models/UserModel");
 
-
-
-//USER SIGN IN ROUTE
+// Login route
 router.post("/Signin", async (req, res) => {
-    const data = req.body;
-    // Validate email pattern using regular expression
-    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!emailPattern.test(data.Email)) {
-        return res.send({
-            message: "INVALID EMAIL ADDRESS",
-            proceed: false,
-        });
+  const data = req.body;
+
+  // Validate email pattern using regular expression
+  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  if (!emailPattern.test(data.Email)) {
+    res.send({
+      message: "INVALID EMAIL ADDRESS",
+      proceed: false,
+    });
+    return;
+  }
+
+  // Validate password pattern using regular expression
+  const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%\^&*])(?=.{8,})/;
+  if (!passwordPattern.test(data.Password)) {
+    res.send({
+      message: "INVALID PASSWORD",
+      proceed: false,
+    });
+    return;
+  }
+
+  // Check if user exists in the database
+  try {
+    const user = await User.findOne({
+      Email: data.Email,
+    });
+
+    if (!user) {
+      res.send({
+        message: "USER NOT FOUND",
+        proceed: false,
+      });
+      return;
     }
-    // Validate password pattern using regular expression
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
-    if (!passwordPattern.test(data.Password)) {
-        return res.send({
-            message: "INVALID PASSWORD",
-            proceed: false,
-        });
+
+    // Compare password hashes to verify the user's password
+    const match = await bcrypt.compare(data.Password, user.HashedPassword);
+
+    if (!match) {
+      res.send({
+        message: "INCORRECT PASSWORD",
+        proceed: false,
+      });
+      return;
     }
-    // Check if user exists in the database
-    try {
-        const user = await User.findOne({
-            Email: data.Email,
-        });
 
-        if (!user) {
-            return res.send({
-                message: "USER NOT FOUND",
-                proceed: false,
-            });
-        }
+    // Generate and return a JWT token using jwtUtils.generateJwtToken(user)
+    const token = jwtUtils.generateJwtToken(user);
 
-        // Compare password hashes to verify the user's password
-        const match = await bcrypt.compare(data.Password, user.HashedPassword);
+    // Return user data and JWT token
+    res.send({
+      data: {
+        UserID: user._id.toString(),
+        Name: user.Name,
+        Email: user.Email,
+        UserName: user.UserName,
+      },
+      token,
+      message: "USER SIGNED IN SUCCESSFULLY",
+      proceed: true,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      message: "ERROR SIGNING IN",
+      proceed: false,
+    });
+  }
+});
 
-        if (!match) {
-            return res.send({
-                message: "INCORRECT PASSWORD",
-                proceed: false,
-            });
-        }
-
-        // Return user data and successful login message
-        return res.send({
-            data: {
-                UserID: user._id.toString(),
-                Name: user.Name,
-                Email: user.Email,
-                UserName: user.UserName,
-            },
-            message: "USER SIGNED IN SUCCESSFULLY",
-            proceed: true,
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).send({
-            message: "ERROR SIGNING IN",
-            proceed: false,})
-    }
-})
-
-
-module.exports = router
+module.exports = router;

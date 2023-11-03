@@ -1,31 +1,33 @@
 const express = require("express");
-const bodyParser = require("body-parser")
-const app = express()
-
-//local imports
-const connectDb = require("./Db.js")
-const loginRoutes = require("./Routes/login.js")
-const registerRoutes = require("./Routes/signup.js")
-const createPostRoutes = require("./Routes/createPost.js")
-const getAllPostRoutes = require("./Routes/getAllPosts.js")
-const getUserPostRoutes = require("./Routes/getUserPosts.js")
+const app = express();
+const connectDb = require("./Db.js");
 
 const PORT = 5000;
 
-//middleware
-app.use(bodyParser.json())
-app.use("/api/users",loginRoutes , registerRoutes,createPostRoutes,getAllPostRoutes,getUserPostRoutes);
-app.use("/",(req,res)=>{
-    return res.json({
-        message: "Welcome to the Agricultre API"
-    });
-})
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// Routes
+const loginRoutes = require("./Routes/login.js");
+const registerRoutes = require("./Routes/signup.js");
+const createPostRoutes = require("./Routes/createPost.js");
+const getAllPostRoutes = require("./Routes/getAllPosts.js");
+const getUserPostRoutes = require("./Routes/getUserPosts.js");
+
+app.use("/api/users", loginRoutes, registerRoutes, createPostRoutes, getAllPostRoutes, getUserPostRoutes);
+
+app.use("/", (req, res) => {
+  return res.json({
+    message: "Welcome to the Agriculture API",
+  });
+});
 
 connectDb()
-.then(()=>{
-    console.log("databse connected")
+  .then(() => {
+    console.log("Database connected");
     app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-
-})
-.catch((err)=>{console.log(err)})
+  })
+  .catch((err) => {
+    console.log(err);
+  });
