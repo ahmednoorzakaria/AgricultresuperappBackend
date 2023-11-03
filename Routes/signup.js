@@ -5,20 +5,40 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 const router = express.Router();
 const app = express();
+
 app.use(express.json());
 app.use(cors());
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Local imports
 const UserData = require("../Models/UserModel");
 
-
+// Improved email validation regular expression
+const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 // Handle User registration requests
 router.post("/register", async (req, res) => {
     const data = req.body;
 
+    // Check if the email is provided and matches the regular expression
+    if (!data.email || !emailPattern.test(data.email)) {
+        return res.send({
+            message: "INVALID EMAIL ADDRESS",
+            proceed: false,
+        });
+    }
+
+    // Password validation regular expression
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%\^&*])(?=.{8,})/;
+
+    if (!passwordPattern.test(data.password)) {
+        return res.send({
+            message: "INVALID PASSWORD: Password should be at least 8 characters and include at least one lowercase letter, one uppercase letter, and one special character.",
+            proceed: false,
+        });
+    }
 
     // Checking if the user's email is already in use
     try {
