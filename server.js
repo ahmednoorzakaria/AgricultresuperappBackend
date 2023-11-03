@@ -9,6 +9,7 @@ const registerRoutes = require("./Routes/signup.js")
 const createPostRoutes = require("./Routes/createPost.js")
 const getAllPostRoutes = require("./Routes/getAllPosts.js")
 const getUserPostRoutes = require("./Routes/getUserPosts.js")
+const jwtUtils = require("./Routes/jwtUtils.js");
 
 const PORT = 5000;
 
