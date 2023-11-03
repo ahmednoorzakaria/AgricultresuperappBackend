@@ -16,25 +16,7 @@ const User = require("../Models/UserModel");
 router.post("/Signin", async (req, res) => {
   const data = req.body;
 
-  // Validate email pattern using regular expression
-  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-  if (!emailPattern.test(data.Email)) {
-    res.send({
-      message: "INVALID EMAIL ADDRESS",
-      proceed: false,
-    });
-    return;
-  }
 
-  // Validate password pattern using regular expression
-  const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%\^&*])(?=.{8,})/;
-  if (!passwordPattern.test(data.Password)) {
-    res.send({
-      message: "INVALID PASSWORD",
-      proceed: false,
-    });
-    return;
-  }
 
   // Check if user exists in the database
   try {
