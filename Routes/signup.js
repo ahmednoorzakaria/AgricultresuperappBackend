@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const bcrypt = require("bcrypt");
 const multer = require("multer");
 const router = express.Router();
 const app = express();
@@ -19,12 +18,12 @@ const UserData = require("../Models/UserModel");
 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 // Handle User registration requests
-router.post("/register", async (req, res) => {
+router.post("/register", upload.single("profileImage"), async (req, res) => {
     const data = req.body;
 
     // Check if the email is provided and matches the regular expression
     if (!data.email || !emailPattern.test(data.email)) {
-        return res.send({
+        return res.status(400).json({
             message: "INVALID EMAIL ADDRESS",
             proceed: false,
         });
@@ -34,20 +33,20 @@ router.post("/register", async (req, res) => {
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%\^&*])(?=.{8,})/;
 
     if (!passwordPattern.test(data.password)) {
-        return res.send({
+        return res.status(400).json({
             message: "INVALID PASSWORD: Password should be at least 8 characters and include at least one lowercase letter, one uppercase letter, and one special character.",
             proceed: false,
         });
     }
 
-    // Checking if the user's email is already in use
+    // Checking if the user's email (case-insensitive) is already in use
     try {
         const emailInUse = await UserData.findOne({
-            Email: data.email,
+            email: { $regex: new RegExp(data.email, "i") }, // Case-insensitive email search
         });
 
         if (emailInUse) {
-            return res.send({
+            return res.status(400).json({
                 message: "EMAIL ALREADY IN USE",
                 proceed: false,
             });
@@ -63,32 +62,37 @@ router.post("/register", async (req, res) => {
             profileImageData = null;
         }
 
-        const hashedPassword = await bcrypt.hash(data.password, 12);
 
         delete data.password;
-        data.hashedPassword = hashedPassword;
+        // Ensure consistent field naming
         data.bio = req.body.bio;
 
-        const user = await UserData.create(data);
-
-        console.log(user);
-
-        return res.send({
-            data: {
-                UserID: user._id.toString(),
-                Name: user.name,
-                Email: user.email,
-                HashedPassword: hashedPassword,
-                UserName: user.userName,
-                profile_img: user.profile_img,
-                bio: user.bio,
-            },
-            message: "USER CREATED SUCCESSFULLY",
-            proceed: true,
-        });
+        try {
+            const user = await UserData.create(data);
+            console.log(user);
+            return res.status(201).json({
+                data: {
+                    UserID: user._id.toString(),
+                    Name: user.name,
+                    Email: user.email.toLowerCase(),
+                    Password: user.Password,
+                    UserName: user.userName,
+                    profile_img: user.profile_img,
+                    bio: user.bio,
+                },
+                message: "USER CREATED SUCCESSFULLY",
+                proceed: true,
+            });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                message: "Email is in use",
+                proceed: false,
+            });
+        }
     } catch (error) {
         console.error(error);
-        return res.status(500).send({
+        return res.status(500).json({
             message: "ERROR SIGNING UP",
             proceed: false,
         });
