@@ -56,14 +56,12 @@ router.post("/Signin", async (req, res) => {
  
      // Generate and return a JWT token using jwtUtils.generateJwtToken(user)
      const token = jwtUtils.generateJwtToken(user);
- 
      // Return user data and JWT token
      res.send({
        data: {
          UserID: user._id.toString(),
-         Name: user.Name,
          email: user.Email,
-         UserName: user.UserName,
+         UserName: user.name,
        },
        token,
        message: "USER SIGNED IN SUCCESSFULLY",
@@ -77,7 +75,28 @@ router.post("/Signin", async (req, res) => {
      });
   }
  });
- 
- module.exports = router;
+
+ // Logout route
+router.post("/Logout", async (req, res) => {
+  // Get the JWT token from the request header
+  const token = req.headers["authorization"];
+
+  // Validate the token
+  const decodedToken = jwtUtils.verifyJwtToken(token);
+  if (!decodedToken) {
+    res.status(401).send({
+      message: "INVALID TOKEN",
+    });
+    return;
+  }
+
+  // Invalidate the user's JWT token
+  jwtUtils.invalidateJwtToken(token);
+
+  // Send a success response
+  res.send({
+    message: "USER LOGGED OUT SUCCESSFULLY",
+  });
+});
 
 module.exports = router;
