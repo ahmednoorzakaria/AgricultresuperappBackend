@@ -19,8 +19,9 @@ const registerRoutes = require("./Routes/signup.js");
 const createPostRoutes = require("./Routes/createPost.js");
 const getAllPostRoutes = require("./Routes/getAllPosts.js");
 const getUserPostRoutes = require("./Routes/getUserPosts.js");
+const getPostById = require("./Routes/post-id.js")
 
-app.use("/api/users", loginRoutes, registerRoutes, createPostRoutes, getAllPostRoutes, getUserPostRoutes);
+app.use("/api/users", loginRoutes, registerRoutes, createPostRoutes, getAllPostRoutes, getUserPostRoutes,getPostById);
 
 app.use("/", (req, res) => {
   return res.json({
@@ -31,7 +32,7 @@ app.use("/", (req, res) => {
 connectDb()
   .then(() => {
     console.log("Database connected");
-    app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+    app.listen(PORT, () => console.log(`Server is running On port ${PORT}`));
   })
   .catch((err) => {
     console.log(err);
