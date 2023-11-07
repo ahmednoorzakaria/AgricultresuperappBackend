@@ -23,7 +23,16 @@ router.post("/create",async (req, res) => {
     
 
     // Create a new Post document associated with the logged-in user
-    const post = await PostData.create(data);
+    const post = await PostData.create({
+      user_id:data.user_id,
+      post_heading:data.post_heading,
+      post_content: data.post_content,
+      post_image: data.post_image,
+      timestamp: new Date(),
+      likes_count: 0,
+      comments_count: 0
+
+    });
 
     return res.status(201).json({
       user_id:post.user_id,
