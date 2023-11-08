@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const UserSchema = mongoose.Schema({ 
     name: String,
     email: { type: String, unique: true },
@@ -11,4 +12,5 @@ const UserSchema = mongoose.Schema({
   const UserData = mongoose.model('UserData',UserSchema)
   module.exports = UserData
 
+  
    

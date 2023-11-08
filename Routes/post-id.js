@@ -3,37 +3,33 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const router = express.Router();
 const app = express();
-app.use(express.json());
+
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ limit: "100mb", extended: true, parameterLimit: 50000 }));
+
 app.use(cors());
 
-const Post = require('../Models/PostModel');
-const { ObjectId } = require('mongoose');
-router.get('/posts/:postId', async (req, res) => {
-  try {
-    // Extract the postId from the URL parameter
-    const postId = req.params.postId;
-    const Id = new ObjectId(postId);
+const PostData = require('../Models/PostModel');
 
-    // Check if postId is a valid ObjectId
-    if (!mongoose.Types.ObjectId.isValid(Id)) {
-      return res.status(400).json({ message: 'Invalid post ID' });
+router.get('/individualPosts/:Id', async (req, res) => {
+    try {
+        // Extract the postId from the URL parameter
+        const postId = req.params.Id;
+
+        // Find the specific post by its ID
+        const post = await PostData.findOne({_id:postId});
+
+        // Check if the post exists
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Send the post data as a response
+        return res.status(200).json(post);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
-
-    // Find the specific post by its ID and select only the 'title' and 'image' fields
-    const post = await Post.findById(Id);
-
-    // Check if the post exists
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-
-    // Return the post
-    return res.status(200).json(post);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
 });
-
 
 module.exports = router;
