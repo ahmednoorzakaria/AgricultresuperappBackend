@@ -20,8 +20,10 @@ const createPostRoutes = require("./Routes/createPost.js");
 const getAllPostRoutes = require("./Routes/getAllPosts.js");
 const getUserPostRoutes = require("./Routes/getUserPosts.js");
 const getPostById = require("./Routes/post-id.js")
+const addComment = require("./Routes/addComment.js");
+const getUserData = require("./Routes/getUserData.js")
 
-app.use("/api/users", loginRoutes, registerRoutes, createPostRoutes, getAllPostRoutes, getUserPostRoutes,getPostById);
+app.use("/api/users", loginRoutes, registerRoutes, createPostRoutes, getAllPostRoutes, getUserPostRoutes,getPostById,addComment,getUserData);
 
 app.use("/", (req, res) => {
   return res.json({
