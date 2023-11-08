@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const PostSchema = mongoose.Schema({ 
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "UserData" }, 
+    user_id:String, 
     post_heading:String,
     post_content: String,
     post_image: String, 
