@@ -7,35 +7,40 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const Post = require('../Models/Schemas')
-const Comment = require('../Models/Schemas')
+const Post = require('../Models/PostModel');
 
-router.post('/posts/:postId/comment', async (req, res) => {
+router.put('/addComment/:postId', async (req, res) => {
     try {
-      // Extract comment data from the request body
-      
-      const { user_id, post_id, comment_content } = req.body;
-    
-  
-      // Create a new Comment document
-      const newComment = new Comment({
-        user_id,
-        post_id,
-        comment_content,
-        timestamp: new Date(),
-      });
-  
-      // Save the new comment to the database
-      await newComment.save();
-  
-      // Increment the comments_count in the corresponding Post
-      await Post.findByIdAndUpdate(post_id, { $inc: { comments_count: 1 } });
-  
-      return res.status(201).json(newComment);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-  });
+        // Extract comment data from the request body
+        const postId = req.params.postId; // Correct the variable name to 'postId'
+        const { user_id, comment_content } = req.body;
 
-  module.exports = router  
+        // Create the comment object
+        const newComment = {
+            user_id: user_id,
+            comment_content: comment_content,
+        };
+
+        // Update the corresponding post to include the new comment
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            {
+                $push: { comments: newComment }, // Assuming you have a 'comments' field in your Post schema
+                $inc: { comments_count: 1 }, // Increment the comments_count
+            },
+            { new: true } // Return the updated post
+        );
+
+        if (!updatedPost) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Return the new comment as a response
+        return res.status(201).json(newComment);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+module.exports = router;

@@ -7,6 +7,7 @@ const PostSchema = mongoose.Schema({
     timestamp: Date,
     likes_count: Number, 
     comments_count: Number,
+    comments:Array,
   });
 
   const PostData = mongoose.model('Post',PostSchema)
