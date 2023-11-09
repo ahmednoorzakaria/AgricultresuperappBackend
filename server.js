@@ -25,6 +25,9 @@ const getUserData = require("./Routes/getUserData.js")
 const followUser = require("./Routes/followUser.js");
 
 app.use("/api/users", loginRoutes, registerRoutes, createPostRoutes, getAllPostRoutes,followUser, getUserPostRoutes,getPostById,addComment,getUserData);
+const UserData = require("./Routes/UserData.js")
+
+app.use("/api/users", UserData,loginRoutes, registerRoutes, createPostRoutes, getAllPostRoutes, getUserPostRoutes,getPostById,addComment,getUserData);
 
 app.use("/", (req, res) => {
   return res.json({
