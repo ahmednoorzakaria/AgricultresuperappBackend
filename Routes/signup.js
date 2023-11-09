@@ -1,15 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const multer = require("multer");
 const router = express.Router();
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
 
 // Local imports
 const UserData = require("../Models/UserModel");
@@ -18,7 +15,7 @@ const UserData = require("../Models/UserModel");
 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 // Handle User registration requests
-router.post("/register", upload.single("profileImage"), async (req, res) => {
+router.post("/register", async (req, res) => {
     const data = req.body;
 
     // Check if the email is provided and matches the regular expression
@@ -52,20 +49,12 @@ router.post("/register", upload.single("profileImage"), async (req, res) => {
             });
         }
 
-        let profileImageData;
-
-        if (req.file) {
-            // If an image file is uploaded, use the uploaded file's binary data
-            profileImageData = req.file.buffer;
-        } else {
-            // Handle the case where no image or URL is provided
-            profileImageData = null;
-        }
+        
 
 
         delete data.password;
-        // Ensure consistent field naming
         data.bio = req.body.bio;
+        data.profile_img = req.body.profile_img
 
         try {
             const user = await UserData.create(data);
