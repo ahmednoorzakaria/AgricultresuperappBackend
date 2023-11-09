@@ -5,7 +5,7 @@ const UserSchema = mongoose.Schema({
     email: { type: String, unique: true },
     Password: String,
     userName: String,
-    profile_img: Buffer,
+    profile_img: String,
     bio: String,
     following:Array,
     followers:Array,
