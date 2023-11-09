@@ -7,6 +7,8 @@ const UserSchema = mongoose.Schema({
     userName: String,
     profile_img: Buffer,
     bio: String,
+    following:Array,
+    followers:Array,
   });
 
   const UserData = mongoose.model('UserData',UserSchema)
