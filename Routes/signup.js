@@ -26,15 +26,7 @@ router.post("/register", async (req, res) => {
         });
     }
 
-    // Password validation regular expression
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%\^&*])(?=.{8,})/;
-
-    if (!passwordPattern.test(data.password)) {
-        return res.status(400).json({
-            message: "INVALID PASSWORD: Password should be at least 8 characters and include at least one lowercase letter, one uppercase letter, and one special character.",
-            proceed: false,
-        });
-    }
+  
 
     // Checking if the user's email (case-insensitive) is already in use
     try {
