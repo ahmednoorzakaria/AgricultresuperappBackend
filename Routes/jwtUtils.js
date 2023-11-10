@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
+const nodemailer = require('nodemailer');
+const User = require("../Models/UserModel")
 
-const secretKey = "YOUR_SECRET_KEY"; // Replace with your actual secret key
+const secretKey = "123456789abcdefgh"; // Replace with your actual secret key
 
 // Maintain an array of revoked tokens
 const revokedTokens = [];
@@ -28,7 +30,7 @@ function verifyJwtToken(token) {
     if (revokedTokens.includes(token)) {
       return null; // Token has been revoked
     }
-    
+
     const decodedToken = jwt.verify(token, secretKey);
     return decodedToken;
   } catch (error) {
@@ -36,10 +38,10 @@ function verifyJwtToken(token) {
   }
 }
 
-// Function to revoke a token
-function invalidateJwtToken(token) {
-  // Add the token to the revokedTokens array
-  revokedTokens.push(token);
-}
 
-module.exports = { generateJwtToken, verifyJwtToken, invalidateJwtToken };
+
+
+module.exports = {
+  generateJwtToken,
+  verifyJwtToken,
+};
