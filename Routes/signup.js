@@ -54,7 +54,7 @@ router.post("/register", async (req, res) => {
 
         delete data.password;
         data.bio = req.body.bio;
-        data.profile_img = req.body.profile_img
+        
 
         try {
             const user = await UserData.create(data);
