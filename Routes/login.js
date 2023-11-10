@@ -98,4 +98,58 @@ router.post("/Logout", async (req, res) => {
   });
 });
 
+
+
+router.post("/password-recovery-request", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate a recovery token
+    const recoveryToken = jwtUtils.generatePasswordRecoveryToken(user);
+
+    // Send the recovery token to the user's email
+    jwtUtils.sendRecoveryEmail(user.email, recoveryToken);
+
+    res.status(200).json({ message: "Recovery token sent to email" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error generating recovery token" });
+  }
+});
+
+router.post("/password-recovery", async (req, res) => {
+  const { email, newPassword, recoveryToken } = req.body;
+
+  // Your token validation method
+  const decodedToken = jwtUtils.validatePasswordRecoveryToken(recoveryToken);
+
+  if (!decodedToken || decodedToken.action !== "passwordRecovery" || decodedToken.email !== email) {
+    return res.status(400).json({ message: "Invalid or expired recovery token" });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Change password
+    const result = await jwtUtils.changePassword(user._id, newPassword);
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error in password recovery" });
+  }
+});
+
+
+
+module.exports = router;
 module.exports = router;
